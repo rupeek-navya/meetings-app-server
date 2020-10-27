@@ -1,0 +1,59 @@
+const mongoose = require( 'mongoose' );
+
+const meetingSchema = new mongoose.Schema({
+    name:{
+        type:String,
+        required:true
+    },
+    description:{
+        type:String,
+        required:true,
+        minlength:10
+    },
+    date:{
+        type:Date,
+        required:true
+    },
+    startTime:{
+        hours:{
+            type:Number,
+            min:0,
+            max:23,
+            required:true
+        },
+        minutes:{
+            type:Number,
+            min:0,
+            max:59,
+            required:true
+        }
+    },
+    endTime:{
+        hours:{
+            type:Number,
+            min:0,
+            max:23,
+            required:true
+        },
+        minutes:{
+            type:Number,
+            min:0,
+            max:59,
+            required:true
+        }
+    },
+    attendees:[
+        {
+            userId:{
+                type:mongoose.Schema.ObjectId,
+                required:true
+            },
+            email:{
+                type:String,
+                required:true
+            }
+        }
+    ]
+})
+mongoose.model( 'meeting', meetingSchema );
+   

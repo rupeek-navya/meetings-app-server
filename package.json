@@ -1,0 +1,27 @@
+{
+  "name": "meetings-app-server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/index.js",
+  "scripts": {
+    "start":"nodemon ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rupeek-navya/meetings-app-server.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/rupeek-navya/meetings-app-server/issues"
+  },
+  "homepage": "https://github.com/rupeek-navya/meetings-app-server#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "mongoose": "^5.10.11"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.6"
+  }
+}
