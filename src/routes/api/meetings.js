@@ -1,9 +1,14 @@
 const express=require('express')
-const path=require('path')
-const {getMeetings, searchMeetings, modifyUser}=require('../../controllers/meetings')
+const {getMeetings, searchMeetings, modifyUser, addMeeting}=require('../../controllers/meetings')
+const {authenticate}=require('../../utils/auth')
 const router=express.Router()
 
-router.get('/',getMeetings)
-router.get('/search',searchMeetings)
-router.patch('/:meetingId/:action',modifyUser)
+router.get('/',authenticate,getMeetings)
+
+router.get('/search',authenticate,searchMeetings)
+
+router.patch('/:meetingId/:action',authenticate,modifyUser)
+
+router.post('/add',authenticate,addMeeting)
+
 module.exports=router

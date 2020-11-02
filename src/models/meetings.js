@@ -1,5 +1,16 @@
 const mongoose = require( 'mongoose' );
 
+const attendeSchema=new mongoose.Schema({
+    userId:{
+        type:mongoose.Schema.ObjectId,
+        required:true
+    },
+    email:{
+        type:String,
+        required:true
+    }
+},{_id:false})
+
 const meetingSchema = new mongoose.Schema({
     name:{
         type:String,
@@ -42,18 +53,11 @@ const meetingSchema = new mongoose.Schema({
             required:true
         }
     },
-    attendees:[
-        {
-            userId:{
-                type:mongoose.Schema.ObjectId,
-                required:true
-            },
-            email:{
-                type:String,
-                required:true
-            }
-        }
-    ]
+    attendees:{
+        type:[attendeSchema],
+        required:true
+    }
 })
+
 mongoose.model( 'meeting', meetingSchema );
    
