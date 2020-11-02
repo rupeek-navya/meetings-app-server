@@ -3,7 +3,7 @@ const path=require('path')
 var XLSX = require('xlsx')
 const Meeting = mongoose.model( 'meeting' );
 const User=mongoose.model('user')
-
+const Team=mongoose.model('team')
 
 
 async function getMeetings(req,res,next){
@@ -107,38 +107,54 @@ async function modifyUser(req,res,next){
 }
 
 async function addMeeting(req,res,next){
-    let attendees=[];
+    let newArray={};
     const userId=res.locals.claims.userId
     const email=res.locals.claims.email
-    const meeting=req.body
+    let meeting=req.body
     let arrayOfEmail=meeting.attendees
-    const attendeeFilter={email:{$in:arrayOfEmail}}
-    let validAttendees;
-    User
-    .find(attendeeFilter)
-    .exec((error,users)=>{
-        if(error){
-            error.status=500;
-            return next(error)
+    arrayOfEmail.forEach(str=>{
+        if(str.startsWith('@')){
+            Team
+            .find({shortName:str.substr(1)})
+            .exec((error,team)=>{
+                newArray=team[0].members.map(mem=>mem.email)
+                let newarrayOfEmail=[
+                    ...arrayOfEmail,
+                    ...newArray
+                ]
+                const attendeeFilter={email:{$in:newarrayOfEmail}}
+                let validAttendees;
+                User
+                .find(attendeeFilter)
+                .exec((error,users)=>{
+                    if(error){
+                        error.status=500;
+                        return next(error)
+                    }
+                    validAttendees=users.map(user=>{
+                        return{
+                            userId:user._id,
+                            email:user.email
+                        }
+                    })
+                    if(!validAttendees.find(attendee=>attendee.userId.toString()===userId)){
+                        validAttendees.push({userId,email})
+                    }
+                    meeting.attendees=validAttendees;
+                    Meeting.create(meeting,(error,createdMeeting)=>{
+                        if(error){
+                            error.status=500
+                            return next(error)
+                        }
+                        res.json(createdMeeting)
+                    })
+                })  
+
+            })
+            
         }
-        validAttendees=users.map(user=>{
-            return{
-                userId:user._id,
-                email:user.email
-            }
-        })
-        if(!validAttendees.find(attendee=>attendee.userId.toString()===userId)){
-            validAttendees.push({userId,email})
-        }
-        meeting.attendees=validAttendees;
-        Meeting.create(meeting,(error,createdMeeting)=>{
-            if(error){
-                error.status=500
-                return next(error)
-            }
-            res.json(createdMeeting)
-        })
-    })  
+    })
+    
 }
 
 
